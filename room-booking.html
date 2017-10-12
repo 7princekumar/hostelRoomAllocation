@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <title>Room-booking</title>
+        <link rel="stylesheet" type="text/css" href="room-booking.css">
+        <script src="http://demo.techbrij.com/jquery-1.4.1.min.js" type="text/javascript"></script>
+     </head>
+    
+    <body>
+
+      <h2 style="font-size:1.2em;"> Choose Room by clicking the corresponding seat in the layout below:</h2>
+       <div id="holder"> 
+		<ul  id="place">
+        </ul>    
+	</div>
+	 <div style="width:600px;text-align:center;overflow:auto"> 
+	<ul id="seatDescription">
+<li style="background:url('empty-rooms.png') no-repeat scroll 0 0 transparent;">Available Room</li>
+<li style="background:url('book-room.png') no-repeat scroll 0 0 transparent;">Booked Room</li>
+<li style="background:url('empty-rooms.png') no-repeat scroll 0 0 transparent;">Selected Room</li>
+	</ul>        </div>
+	<div style="width:580px;text-align:left;margin:5px">	
+		<input type="button" id="btnShowNew" value="Show Selected Seats" /><input type="button" id="btnShow" value="Show All" />            </div>
+        
+        <script>
+             $(function () {
+            var settings = {
+                rows: 5,
+                cols: 15,
+                rowCssPrefix: 'row-',
+                colCssPrefix: 'col-',
+                seatWidth: 50,
+                seatHeight: 50,
+                seatCss: 'seat',
+                selectedSeatCss: 'selectedSeat',
+				selectingSeatCss: 'selectingSeat'
+            };
+
+            var init = function (reservedSeat) {
+                var str = [], seatNo, className;
+                for (i = 0; i < settings.rows; i++) {
+                    for (j = 0; j < settings.cols; j++) {
+                        seatNo = (i + j * settings.rows + 1);
+                        className = settings.seatCss + ' ' + settings.rowCssPrefix + i.toString() + ' ' + settings.colCssPrefix + j.toString();
+                        if ($.isArray(reservedSeat) && $.inArray(seatNo, reservedSeat) != -1) {
+                            className += ' ' + settings.selectedSeatCss;
+                        }
+                        str.push('<li class="' + className + '"' +
+                                  'style="top:' + (i * settings.seatHeight).toString() + 'px;left:' + (j * settings.seatWidth).toString() + 'px">' +
+                                  '<a title="' + seatNo + '">' + seatNo + '</a>' +
+                                  '</li>');
+                    }
+                }
+                $('#place').html(str.join(''));
+            };
+
+            //case I: Show from starting
+            init();
+
+            //Case II: If already booked
+            var bookedSeats = [5, 10, 25];
+            init(bookedSeats);
+
+
+            $('.' + settings.seatCss).click(function () {
+			if ($(this).hasClass(settings.selectedSeatCss)){
+				alert('This room is already reserved');
+			}
+			else{
+                $(this).toggleClass(settings.selectingSeatCss);
+				}
+            });
+
+            $('#btnShow').click(function () {
+                var str = [];
+                $.each($('#place li.' + settings.selectedSeatCss + ' a, #place li.'+ settings.selectingSeatCss + ' a'), function (index, value) {
+                    str.push($(this).attr('title'));
+                });
+                alert(str.join(','));
+            })
+
+            $('#btnShowNew').click(function () {
+                var str = [], item;
+                $.each($('#place li.' + settings.selectingSeatCss + ' a'), function (index, value) {
+                    item = $(this).attr('title');                   
+                    str.push(item);                   
+                });
+                alert(str.join(','));
+            })
+        });
+        
+        
+        
+        </script>
+ 
+        </body>
+
+
+</html>
